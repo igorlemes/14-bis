@@ -1,5 +1,6 @@
 import cv2
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 class image_mock:
@@ -18,4 +19,9 @@ class image_mock:
 
 class enhance:
 
-    pass
+    def sharpen(data):
+        kernel = np.array([[0, -1, 0],
+                           [-1, 5, -1],
+                           [0, -1, 0]])
+
+        return cv2.filter2D(src=data, ddepth=-1, kernel=kernel)
