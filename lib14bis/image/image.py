@@ -2,6 +2,7 @@
 
 import cv2
 import numpy as np
+import zipfile as zp
 
 class Image:
     def __init__(self, filename):
@@ -48,4 +49,16 @@ class Image:
         cv2.waitKey(0)
         cv2.destroyAllWindows()
 
-    
+class Unzip:
+    def __init__(self, filename):
+        self.filename = filename
+
+    def unzip_it(self):
+        with zp.ZipFile(self.filename, mode="r") as archive:
+         for file in archive.namelist():
+             if file.endswith(".png"):
+                archive.extract(file, "output_dir/")
+
+    def get_data(self):
+        zip = zp(self.filename)
+        return {name: zip.read(name) for name in zip.namelist()}
