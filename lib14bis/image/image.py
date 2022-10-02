@@ -53,6 +53,7 @@ class Data:
         self.b = self.get_blue()
 
     def load_images(self, filename):
+        """ Load image from file"""
         data = Unzip(filename).get_data()
         for name in data:
             if "blue" in name:
