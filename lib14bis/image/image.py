@@ -1,7 +1,7 @@
 # Class to read image from file or URL
 import cv2
 import numpy as np
-import matplotlib.pyplot as plt
+import zipfile as zp
 
 class Image:
     def __init__(self, filename):
@@ -81,15 +81,14 @@ class Data:
 
 class Unzip:
     def __init__(self, filename):
-        """ Constructor """
         self.filename = filename
-    
-    def get_data(self):
-        """ Returns data of image """
-        return self.extract_zip(self.filename)
 
-    def extract_zip(input_zip):
-        from zipfile import ZipFile
-        input_zip=ZipFile(input_zip)
-        return {name: input_zip.read(name) for name in input_zip.namelist()}
-    
+    def unzip_it(self):
+        with zp.ZipFile(self.filename, mode="r") as archive:
+         for file in archive.namelist():
+             if file.endswith(".png"):
+                archive.extract(file, "output_dir/")
+
+    def get_data(self):
+        zip = zp(self.filename)
+        return {name: zip.read(name) for name in zip.namelist()}
