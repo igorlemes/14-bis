@@ -42,12 +42,6 @@ class Image:
         aux = cv2.cvtColor(self.data.image, cv2.COLOR_BGR2RGB)
         plt.imshow(aux)
         plt.plot()
-    
-    def show_split(self):
-        """ Show blue channel of image """
-        plt.imshow(self.data.get_blue(), cmap='Blues')
-        plt.imshow(self.data.get_blue(), cmap='gray')
-        plt.plot()
 
 class Data:
     def __init__(self, filename):
