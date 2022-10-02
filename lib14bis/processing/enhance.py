@@ -38,7 +38,6 @@ class Enhance:
         return cv2.filter2D(src=img.data, ddepth=-1, kernel=kernel)
 
     def multiply(img, facs):
-
         new_img = img.copy()
 
         # red
