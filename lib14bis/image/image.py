@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 import zipfile as zp
 import matplotlib.pyplot as plt
+import copy
 
 
 class Image:
@@ -12,9 +13,11 @@ class Image:
         self.data = Data(filename)
         self.height, self.width, self.channels = self.data.shape
 
+    # def copy(self):
+    #     """ Return a copy of image """
+    #     return Image(self.filename)
     def copy(self):
-        """ Return a copy of image """
-        return Image(self.filename)
+        return copy.deepcopy(self)
 
     def get_histogram(self):
         """ Return histogram of image """

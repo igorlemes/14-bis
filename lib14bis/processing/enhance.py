@@ -74,10 +74,20 @@ class Enhance:
     def multiply(img, facs):
         new_img = img.copy()
         # red
-        new_img.data.r = np.floor(img.data.r * facs[0])
+        new_img.data.image[:, :, 2] = np.floor(img.data.r * facs[0])
         # green
-        new_img.data.g = np.floor(img.data.g * facs[1])
+        new_img.data.image[:, :, 1] = np.floor(img.data.g * facs[1])
         # blue
-        new_img.data.b = np.floor(img.data.b * facs[2])
+        new_img.data.image[:, :, 0] = np.floor(img.data.b * facs[2])
 
+        return new_img
+
+    def upscale(img):
+        new_img = img.copy()
+
+        sr = cv2.dnn_superres.DnnSuperResImpl_create()
+        path = "lib14bis/processing/EDSR_x2.pb"
+        sr.readModel(path)
+        sr.setModel("edsr", 2)
+        new_img.data.image = sr.upsample(new_img.data.image)
         return new_img
