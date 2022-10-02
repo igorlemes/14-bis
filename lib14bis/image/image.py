@@ -1,51 +1,95 @@
 # Class to read image from file or URL
-
 import cv2
 import numpy as np
+import matplotlib.pyplot as plt
 
 class Image:
     def __init__(self, filename):
+        """ Constructor """
         self.filename = filename
-        self.image = cv2.imread(filename, cv2.IMREAD_COLOR)
-        self.height, self.width, self.channels = self.image.shape
+        self.data = Data(filename)
+        self.height, self.width, self.channels = self.data.shape
 
-    # open greyscale blue image file on openCV
-    
+    def open_images(self, filename):
+        """ Open 3 grey images and combine them in one colored image  """
+        # regex of filename to find if it is a blue, green or red image
+        image = cv2.imread(filename)
+        return image
+
+    def copy(self):
+        """ Return a copy of image """
+        return Image(self.filename)
 
     def get_histogram(self):
-        # get histogram of image
+        """ Return histogram of image """
         hist = cv2.calcHist([self.image], [0], None, [256], [0, 256])
         return hist
-    
-    
-
-    def get_image(self):
-        return self.image
 
     def get_blue(self):
+        """ Returns blue channel of image """
         return self.image[:,:,0]
     
     def get_green(self):
+        """ Returns green channel of image """
         return self.image[:,:,1]
     
     def get_red(self):
+        """ Returns red channel of image """
         return self.image[:,:,2]
     
     def get_height(self):
+        """ Returns height of image """
         return self.height
     
     def get_width(self):
+        """ Returns width of image """
         return self.width
 
     def get_channels(self):
+        """ Returns number of channels of image """
         return self.channels
     
     def save(self, filename):
+        """ Save image to file """
         cv2.imwrite(filename, self.image)
     
     def show(self):
-        cv2.imshow(self.filename, self.image)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        """ Show image """
+        aux = cv2.cvtColor(self.image, cv2.COLOR_BGR2RGB)
+        plt.imshow(self.filename, self.image)
+        plt.plot()
 
+class Data:
+    def __init__(self, filename):
+        """ Constructor """
+        self.data = Unzip(filename).get_data()
+        self.r = self.get_red() 
+        self.g = self.get_green()
+        self.b = self.get_blue()
+
+    def get_blue(self):
+        """ Returns blue channel of image """
+        return self.data[:,:,0]
+    
+    def get_green(self):
+        """ Returns green channel of image """
+        return self.data[:,:,1]
+
+    def get_red(self):
+        """ Returns red channel of image """
+        return self.data[:,:,2]
+
+class Unzip:
+    def __init__(self, filename):
+        """ Constructor """
+        self.filename = filename
+    
+    def get_data(self):
+        """ Returns data of image """
+        return self.extract_zip(self.filename)
+
+    def extract_zip(input_zip):
+        from zipfile import ZipFile
+        input_zip=ZipFile(input_zip)
+        return {name: input_zip.read(name) for name in input_zip.namelist()}
     
