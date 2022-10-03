@@ -38,7 +38,7 @@ class Image:
 
     def save(self, filename):
         """ Save image to file """
-        cv2.imwrite(filename, self.image)
+        cv2.imwrite(filename, self.data.image)
 
     def show(self):
         """ Show image """

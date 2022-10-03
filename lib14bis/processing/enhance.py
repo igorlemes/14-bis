@@ -74,20 +74,40 @@ class Enhance:
     def multiply(img, facs):
         new_img = img.copy()
         # red
-        new_img.data.image[:, :, 2] = np.floor(img.data.r * facs[0])
+        new_img.data.image[:, :, 2] = np.floor(
+            img.data.image[:, :, 2] * facs[0])
         # green
-        new_img.data.image[:, :, 1] = np.floor(img.data.g * facs[1])
+        new_img.data.image[:, :, 1] = np.floor(
+            img.data.image[:, :, 1] * facs[1])
         # blue
-        new_img.data.image[:, :, 0] = np.floor(img.data.b * facs[2])
+        new_img.data.image[:, :, 0] = np.floor(
+            img.data.image[:, :, 0] * facs[2])
 
         return new_img
 
-    def upscale(img):
+    def contrast(img, alpha, beta):
+        new_img = img.copy()
+        image = new_img.data.image
+        median = image.mean()
+        new_image = np.zeros(image.shape, dtype=np.uint8)
+        new_image = np.clip(np.floor(alpha * (image - median) + beta), 0, 255)
+
+        new_image = new_image.astype(np.uint8)
+        new_img.data.image = new_image
+        return new_img
+
+    def upscaleEDSR(img):
         new_img = img.copy()
 
         sr = cv2.dnn_superres.DnnSuperResImpl_create()
         path = "lib14bis/processing/EDSR_x2.pb"
         sr.readModel(path)
         sr.setModel("edsr", 2)
-        new_img.data.image = sr.upsample(new_img.data.image)
+        new_img.data.image = sr.upsample(new_img.data.image / 255)
+        return new_img
+
+    def upscale(img, fac=2):
+        new_img = img.copy()
+        new_img.data.image = cv2.resize(
+            new_img.data.image, dsize=None, fx=fac, fy=fac)
         return new_img
