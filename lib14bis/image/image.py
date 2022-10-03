@@ -3,6 +3,8 @@ import cv2
 import numpy as np
 import zipfile as zp
 import matplotlib.pyplot as plt
+import copy
+
 
 class Image:
     def __init__(self, filename):
@@ -11,19 +13,21 @@ class Image:
         self.data = Data(filename)
         self.height, self.width, self.channels = self.data.shape
 
+    # def copy(self):
+    #     """ Return a copy of image """
+    #     return Image(self.filename)
     def copy(self):
-        """ Return a copy of image """
-        return Image(self.filename)
+        return copy.deepcopy(self)
 
     def get_histogram(self):
         """ Return histogram of image """
         hist = cv2.calcHist([self.image], [0], None, [256], [0, 256])
         return hist
-    
+
     def get_height(self):
         """ Returns height of image """
         return self.height
-    
+
     def get_width(self):
         """ Returns width of image """
         return self.width
@@ -31,11 +35,11 @@ class Image:
     def get_channels(self):
         """ Returns number of channels of image """
         return self.channels
-    
+
     def save(self, filename):
         """ Save image to file """
-        cv2.imwrite(filename, self.image)
-    
+        cv2.imwrite(filename, self.data.image)
+
     def show(self):
         """ Show image """
         # print(self.data)
@@ -43,12 +47,13 @@ class Image:
         plt.imshow(aux)
         plt.plot()
 
+
 class Data:
     def __init__(self, filename):
         """ Constructor """
         self.image = self.load_images(filename)
         self.shape = self.image.shape
-        self.r = self.get_red() 
+        self.r = self.get_red()
         self.g = self.get_green()
         self.b = self.get_blue()
 
@@ -68,15 +73,16 @@ class Data:
 
     def get_blue(self):
         """ Returns blue channel of image """
-        return self.image[:,:,0]
-    
+        return self.image[:, :, 0]
+
     def get_green(self):
         """ Returns green channel of image """
-        return self.image[:,:,1]
+        return self.image[:, :, 1]
 
     def get_red(self):
         """ Returns red channel of image """
-        return self.image[:,:,2]
+        return self.image[:, :, 2]
+
 
 class Unzip:
     def __init__(self, filename):
@@ -86,14 +92,15 @@ class Unzip:
     def unzip_it(self):
         """ Unzip file """
         with zp.ZipFile(self.filename, mode="r") as archive:
-         for file in archive.namelist():
-             if file.endswith(".png"):
-                archive.extract(file, "output_dir/")
+            for file in archive.namelist():
+                if file.endswith(".png"):
+                    archive.extract(file, "output_dir/")
 
     def get_data(self):
         """ Return data of image """
         zip = zp.ZipFile(self.filename)
         data = {}
         for name in zip.namelist():
-            data[name] = cv2.imdecode(np.frombuffer(zip.read(name), np.uint8), 1)
+            data[name] = cv2.imdecode(
+                np.frombuffer(zip.read(name), np.uint8), 1)
         return data
